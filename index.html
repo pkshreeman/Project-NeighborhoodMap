@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--Yes, it's in hmtl, and in English-->
+
+<head>
+    <meta charset="utf-8">
+    <!-- Character decoding: https://tools.ietf.org/html/rfc3629-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--responsiveness requires this configuration -->
+    <link href="https://fonts.googleapis.com/css?family=Lato:100,400" rel="stylesheet">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/interactive.css">
+    <title> Your friendly neighborhood! </title>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4" id="infonav">
+            This is a nagviational column </div>
+            <div class="col-md-8" id="map">
+            Awaiting for the google map to appear
+          </div>
+        </div>
+        <div class ="row">
+          <div class = "col-md-12">
+            <pre data-bind = "text: temp">Temp </pre>
+            <pre data-bind = "text: city"> Location </pre>
+          </div>
+        </div>
+    </div>
+    <script src="js/jquery-3.1.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/knockout-3.4.2.js"></script>
+    <script src="js/partone.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9AjHKQO7uPcP3qj0b__1NI0xMXXgPBrc&v=3&callback=model.getMap"></script>
+</body>
+</html>
