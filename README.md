@@ -64,3 +64,8 @@ id City ID
 name City name
 
 cod Internal parameter
+
+
+# Developer Google Instructions
+### Places API
+<https://developers.google.com/maps/documentation/javascript/examples/place-search>

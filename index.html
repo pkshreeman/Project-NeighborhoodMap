@@ -14,14 +14,28 @@
 </head>
 <body>
     <div class="container">
+      <div class = 'row'>
+        <div class = "col-md-8".>
+        <h1> Neighborhood Analyzer</h1>
+        </div>
+        <div class = "col-md-4">
+          Select type of locations you want to search within your area.<br>
+        <select id = "select" name = "select" size=""data-bind="options: places, value = places, optionsText=places">
+        </select>
+      </div>
+      </div>
         <div class="row">
-            <div class="col-md-4" id="infonav">
-            This is a nagviational column </div>
+            <div class="col-md-4" id="infonav" data-bind="foreach: placesGoogle">
+            <button class = " btn btn-default" onclick = "markmarker()">
+              <h5 data-bind="text: name">  This is a navigational column </h5>
+              <span data-bind="text: vicinity"></span>
+            </button>
+           </div>
             <div class="col-md-8" id="map">
             Awaiting for the google map to appear
-            <button></button>
           </div>
         </div>
+        <hr>
         <div class ="row">
           <div class = "col-md-1">
             Welcome!
@@ -38,6 +52,7 @@
              <img src="" data-bind=" attr:{src: iconID}"/>
            </div>
         </div>
+        <hr>
         <div class = "row">
           <div class = "col-md-6 nytimes-container">
             <h4 id="nytimes-header">New York Times Articles</h4>
@@ -63,6 +78,6 @@
     <script src="js/bootstrap.min.js"></script>
     <script src="js/knockout-3.4.2.js"></script>
     <script src="js/partone.js"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9AjHKQO7uPcP3qj0b__1NI0xMXXgPBrc&v=3"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9AjHKQO7uPcP3qj0b__1NI0xMXXgPBrc&v=3&libraries=places,geometry,drawing"></script>
 </body>
 </html>
