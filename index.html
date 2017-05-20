@@ -19,19 +19,50 @@
             This is a nagviational column </div>
             <div class="col-md-8" id="map">
             Awaiting for the google map to appear
+            <button></button>
           </div>
         </div>
         <div class ="row">
-          <div class = "col-md-12">
-            <pre data-bind = "text: temp">Temp </pre>
-            <pre data-bind = "text: city"> Location </pre>
+          <div class = "col-md-1">
+            Welcome!
           </div>
+          <div class = "col-md-3">
+            Your current location: <br>
+            <span data-bind = "text: address"> Loading ...</span>
+          </div>
+          <div class = "col-md-4">
+             <span data-bind = "html: temp"> Loading ...</span>
+           </div>
+           <div class = "col-md-4">
+             <span data-bind="text: weatherdes"></span>
+             <img src="" data-bind=" attr:{src: iconID}"/>
+           </div>
+        </div>
+        <div class = "row">
+          <div class = "col-md-6 nytimes-container">
+            <h4 id="nytimes-header">New York Times Articles</h4>
+            <div data-bind="foreach: articlesNYT">
+              <a href=""  data-bind="attr:{href: web_url}">
+                <h5 data-bind="text: headline.main"> What's going on in your city?></h5>
+                </a>
+              <span data-bind="text: lead_paragraph"></span>
+            </ul>
+          </div>
+        </div>
+            <div class = "col-md-6 wikiArray">
+              <h4 id="wiki"> Wiki References </h4>
+              <div data-bind="foreach: wikiArray">
+              <h5 data-bind="text: title"></h5>
+              <a href="" data-bind="attr:{href: link}"><span data-bind="text: desc">
+              </span></a>
+            </div>
+             </div>
         </div>
     </div>
     <script src="js/jquery-3.1.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/knockout-3.4.2.js"></script>
     <script src="js/partone.js"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9AjHKQO7uPcP3qj0b__1NI0xMXXgPBrc&v=3&callback=model.getMap"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9AjHKQO7uPcP3qj0b__1NI0xMXXgPBrc&v=3"></script>
 </body>
 </html>
