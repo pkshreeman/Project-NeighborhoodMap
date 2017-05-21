@@ -1,4 +1,43 @@
-### Parameters of openweathermap JSON
+# Introduction
+## Neighborhood Analyzer
+
+### Installation Instructions:
+
+1. Clone the repo
+
+  - The file structure:
+    * index.html  (Open this in Web Browser)
+    * README.md (You are reading this...)
+    * js (folder)
+      - bootstrap.min.js (Bootstrap)
+      - jquery-3.1.1.min.js (Bootsrap/jQuery)
+      - knockout-3.4.2.js (Knockout JS)
+    * css (folder)
+      - bootstrap-theme.min.css (Bootstrap)
+      - bootstrap.min.css  (Bootstrap)
+      - interactive.css (This is my custom css)
+      - jquery-3.1.1.min.js (Bootstrap/jQuery)
+
+2. Mumble the special github prayers
+
+3. Open the html file in web browser.
+
+### What is in there?
+
+1. First, it will try to geolocalize you by using your web browser's location.  SO please grant the program permission to stalk you.  That way you will have much more relevant and rich experience. Otherwise, it will default to my location (Hopefully, I am not right next to you...)
+
+2.  Once we (cough, I mean...) the application obtain the geolocation, it then will use [Open Weather Map API](<http://openweathermap.org/>) to get the  current weather information (as if you actually can't see what is going on outside).
+
+3. With the same data, [NY Times API](https://developers.nytimes.com/) and [Wiki API](https://www.mediawiki.org/wiki/API:Main_page) then is used to obtain articles that may be relevant to you.  (The search term is based on the city/town search term.)
+
+4. Lastly, but not least, the [Google Map](https://developers.google.com/maps/)  (including places) is invoked with your location as the center.  It then searches various establishments around you on your behalf.  You can control what type of establishments you want to explore by choosing the 'types' in drop down which will automatically update the entire front-end for you.
+
+5.  What you can't do:
+    - Change the 'current location' unless you refresh and choose either default or your location.
+    - Control the search terms and results of NY Times or Wiki Articles from the front-end.
+
+### For my **own** references:
+#### Parameters of openweathermap JSON
 #### <http://openweathermap.org/current#current_JSON>
 ```JSON
 {"coord":

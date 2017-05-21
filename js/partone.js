@@ -363,12 +363,10 @@ var ViewModel1 = {
     ]),
     selectedPlace: ko.observable()
 }
-function markmarker() {
+function markmarker(place) {
 //  in hmtl inside button add -- onclick="markmarker()"
     console.log("It works!");
-    console.log(this)
-    self = this;
-    google.maps.event.trigger($parent.marker, 'click')
+    google.maps.event.trigger(place.marker, 'click')
 }
 
 var markers = [];

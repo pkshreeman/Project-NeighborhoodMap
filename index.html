@@ -20,13 +20,13 @@
         </div>
         <div class = "col-md-4">
           Select type of locations you want to search within your area.<br>
-        <select id = "select" name = "select" size=""data-bind="options: places, value = places, optionsText=places">
+        <select id = "select" name = "select" data-bind="options: places, value = places, optionsText=places">
         </select>
       </div>
       </div>
         <div class="row">
             <div class="col-md-4" id="infonav" data-bind="foreach: placesGoogle">
-            <button class = " btn btn-default" onclick = "markmarker()">
+            <button class = " btn btn-default" data-bind="click: markmarker">
               <h5 data-bind="text: name">  This is a navigational column </h5>
               <span data-bind="text: vicinity"></span>
             </button>
