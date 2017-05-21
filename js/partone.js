@@ -174,11 +174,36 @@ var model = {
                      });
                     // ViewModel1.placesGoogle()[i].marker= marker;
                     */
-          }
-       }
 
+          }
+       } else { console.log("callback2 failed")}
+
+
+        //Selecting the filter...
+
+        $('#select').on("change",function(){
+          console.log("selected!");
+          console.log(this.value);
+
+          selfmarker = marker[0];
+          marker = [selfmarker];
+          for (var i = 0; i < markers.length; i++) {
+          markers[i].setMap(null);
+          }
+
+          ViewModel1.selectedPlace(this.value);
+          //double check all the cascading effects here please.
+          //var service = new google.maps.places.PlacesService(map);
+          service.nearbySearch({
+              location: currentloc,
+              radius: 5000,
+              type: [ViewModel1.selectedPlace()]
+          }, callback2);
+
+        })
 
         function createMarker(place, num) {
+
             var icon = {
                 url: place.icon, //results[i].icon
                 size: new google.maps.Size(25, 25),
@@ -191,7 +216,7 @@ var model = {
                 position: place.geometry.location, //results[i].geometry.location
                 icon: icon
             });
-
+            markers.push(marker);
             ViewModel1.placesGoogle()[num].marker= marker; //lets see if this works...
 
             google.maps.event.addListener(marker, 'click', function() {
@@ -245,7 +270,6 @@ var ViewModel1 = {
     wikiArray: ko.observableArray(),
     placesGoogle: ko.observable(),
     places: ko.observable([
-        ,
         'accounting',
         'airport',
         'amusement_park',
@@ -347,6 +371,6 @@ function markmarker() {
     google.maps.event.trigger($parent.marker, 'click')
 }
 
-
+var markers = [];
 controller.init();
 ko.applyBindings(ViewModel1);
