@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 var model = {
 
     GeoLocalize: function() {
@@ -10,6 +11,7 @@ var model = {
         };
 
         function processor(lat = 38.7293334, long = -121.2751474) {
+          //Default lat and long is installed in case there is issue with obtaining location from client
             JGeo = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat + '&lon=' + long + '&units=metric&appid=eb5d3093d7e824e8a57c0037fc66c1ea';
             var currentGeoLocation = [lat, long, JGeo];
             console.log("currentGeoLocation at Processor():");
@@ -19,8 +21,7 @@ var model = {
             ViewModel1.kolat(lat);
             model.getMap();
             model.obtainRGeo();
-
-        };
+        }
 
         function success(pos) {
             var crd = pos.coords;
@@ -29,69 +30,77 @@ var model = {
             console.log(`Latitude : ${crd.latitude}`);
             console.log(`Longitude: ${crd.longitude}`);
             console.log(`More or less ${crd.accuracy} meters.`);
-        };
+        }
 
         function error(err) {
             processor();
             console.warn(`ERROR(${err.code}): ${err.message}`);
-            console.warn('Default Coordinates are used.')
-        };
+            console.warn('Default Coordinates are used.');
+        }
 
         navigator.geolocation.getCurrentPosition(success, error, options);
     },
 
+
     getNYTimes: function() {
-        var NYTKey = '&api_key=df8caa62f6d142c7bc7c4e5a56d37ea7'
+        var NYTKey = '&api_key=df8caa62f6d142c7bc7c4e5a56d37ea7';
         var NYTUrl = "https://api.nytimes.com/svc/search/v2/articlesearch.json?q=" + ViewModel1.city() + "&sort=newest" + NYTKey;
-        console.log("NYTimes URL get:")
+        console.log("NYTimes URL get:");
         console.log(NYTUrl);
 
-        $.getJSON(NYTUrl, function(data) {
-            ViewModel1.articlesNYT(data.response.docs);
-        }).fail(function(jqxhr, textStatus, error) {
-            var err = textStatus + ", " + error;
-            console.log("Request Failed: " + err);
-        })
-    },
+      $.getJSON(NYTUrl, function(data) {
+        if (data) {
+          ViewModel1.articlesNYT(data.response.docs);
+
+        } else {
+          ViewModel1.errorNYTimes("The NY Times data was returned null");
+        }
+      }).fail(function(jqxhr, textStatus, error) {
+        var err = textStatus + ", " + error;
+        console.log("Request Failed: " + err);
+        ViewModel1.errorNYTimes("The NY Times API has failed. Please check your connectivity.");
+      });
+      },
 
     getWiki: function() {
         var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + ViewModel1.city() + '&format=json';
-        var wikiTimer = setTimeout(function() {
-            console.log("Unable to obtain the latest.  Please check your connection for Wiki.");
-        }, 8000);
-
         $.ajax({
-            url: wikiUrl,
-            dataType: 'jsonp',
-            jsonp: 'callback',
-            success: function(response) {
-                console.log("Wiki's Response");
-                console.log(response);
-                ViewModel1.wikiHeader(response[1]);
-                ViewModel1.wikiArticle(response[2]);
-                ViewModel1.wikiLink(response[3]);
-                for (var i = 0; i < response[1].length; i++) {
-                    ViewModel1.wikiArray.push({
-                        title: response[1][i],
-                        desc: response[2][i],
-                        link: response[3][i]
-                    });
-                    //console.log(i)
-                }
-                clearTimeout(wikiTimer);
-            }
-        })
+      url: wikiUrl,//just adding error here.
+      dataType: 'jsonp',
+      jsonp: 'callback'
+    }).done(function(response) {
+      console.log("Wiki's Response");
+      console.log(response);
+      ViewModel1.wikiHeader(response[1]);
+      ViewModel1.wikiArticle(response[2]);
+      ViewModel1.wikiLink(response[3]);
+      for (var i = 0; i < response[1].length; i++) {
+        ViewModel1.wikiArray.push({
+          title: response[1][i],
+          desc: response[2][i],
+          link: response[3][i]
+        });
+      }
+    }).fail(function(jqXHR, textStatus) {
+      console.log(textStatus);
+      ViewModel1.errorWiki("The Wiki API call has failed.");
+    });
 
     },
 
     obtainWeather: function(geo) {
-        console.log('Obtaining the Weather! :D ')
+        console.log('Obtaining the Weather! :D ');
         //console.log(geo)
+        //Note, use geo[2] for the url address...
         $.getJSON(geo[2], function(data) {
             controller.weatherize(data);
             ViewModel1.weatherdata(data);
             console.log(data);
-        })
+        }).fail(function(jqxhr, textStatus, error) {
+          var err = textStatus + ", " + error;
+          console.log("Request Failed: " + err);
+          ViewModel1.errorWeather("The OpenWeatherMap API has failed. Please check your connectivity.");
+        });
     },
 
     obtainRGeo: function() {
@@ -103,7 +112,11 @@ var model = {
                 ViewModel1.address(gdata.results["0"].formatted_address);
                 model.getNYTimes();
                 model.getWiki();
-            })
+            }).fail(function(jqxhr, textStatus, error) {
+              var err = textStatus + ", " + error;
+              console.log("Request Failed: " + err);
+              ViewModel1.errorRGeo("The Google Location API has failed. Please check your connectivity.  This cascades into NY Times and Wiki's ability to obtain results as well.");
+            });
     },
 
     getMap: function() {
@@ -150,7 +163,12 @@ var model = {
         service.nearbySearch({
             location: currentloc,
             radius: 500,
-            type: [ViewModel1.selectedPlace()]
+            type: [ViewModel1.selectedPlace().subscribe(function(){
+              for (var i = 0; i < markers.length; i++) {
+                  markers[i].setMap(null);
+              }
+              markers = [];
+            })]
         }, callback2);
 
 
@@ -158,102 +176,92 @@ var model = {
             if (status === google.maps.places.PlacesServiceStatus.OK) {
                 ViewModel1.placesGoogle(results);
                 for (var i = 0; i < results.length; i++) {
-                   createMarker(results[i],i);
-                /*   var icon = {
-                       url: results[i].icon,
-                       size: new google.maps.Size(25, 25),
-                       origin: new google.maps.Point(0, 0),
-                       anchor: new google.maps.Point(5, 5),
-                       scaledSize: new google.maps.Size(20, 20)
-                              }
-                   var marker = new google.maps.Marker({
-                       map: map,
-                       position: results[i].geometry.location,
-                       icon: icon
-
-                     });
-                    // ViewModel1.placesGoogle()[i].marker= marker;
-                    */
-
-          }
-       } else { console.log("callback2 failed")}
-
-
-        //Selecting the filter...
-
-        $('#select').on("change",function(){
-          console.log("selected!");
-          console.log(this.value);
-
-          selfmarker = marker[0];
-          marker = [selfmarker];
-          for (var i = 0; i < markers.length; i++) {
-          markers[i].setMap(null);
-          }
-
-          ViewModel1.selectedPlace(this.value);
-          //double check all the cascading effects here please.
-          //var service = new google.maps.places.PlacesService(map);
-          service.nearbySearch({
-              location: currentloc,
-              radius: 5000,
-              type: [ViewModel1.selectedPlace()]
-          }, callback2);
-
-        })
-
-        function createMarker(place, num) {
-
-            var icon = {
-                url: place.icon, //results[i].icon
-                size: new google.maps.Size(25, 25),
-                origin: new google.maps.Point(0, 0),
-                anchor: new google.maps.Point(5, 5),
-                scaledSize: new google.maps.Size(20, 20)
+                    createMarker(results[i], i);
+                }
+            } else {
+                console.log("callback2 failed");
+                ViewModel1.errorMarker('Google Places Call Failed. You will not be seeing any additional markers or places.');
             }
-            var marker = new google.maps.Marker({
-                map: map,
-                position: place.geometry.location, //results[i].geometry.location
-                icon: icon
-            });
-            markers.push(marker);
-            ViewModel1.placesGoogle()[num].marker= marker; //lets see if this works...
 
-            google.maps.event.addListener(marker, 'click', function() {
-                marker.setAnimation(google.maps.Animation.DROP);
-                infowin.setContent(place.name);
-                infowin.open(map, this);
 
-            });
-            google.maps.event.addListener(marker, 'mouseover', function() {
-                marker.setIcon(highlightedIcon);
-            });
-            google.maps.event.addListener(marker, 'mouseout', function() {
-                marker.setIcon(icon);
-            });
+
+        /*   $('#select').on("change", function() {
+                console.log("selected!");
+                console.log(this.value);
+
+                selfmarker = marker[0];
+                marker = [selfmarker];
+                for (var i = 0; i < markers.length; i++) {
+                    markers[i].setMap(null);
+                }
+
+                ViewModel1.selectedPlace(this.value);
+                service.nearbySearch({
+                    location: currentloc,
+                    radius: 5000,
+                    type: [ViewModel1.selectedPlace()]
+                }, callback2);
+
+            });*/
+            function createMarker(place, num) {
+
+                var icon = {
+                    url: place.icon, //results[i].icon
+                    size: new google.maps.Size(25, 25),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(5, 5),
+                    scaledSize: new google.maps.Size(20, 20)
+                };
+                var marker = new google.maps.Marker({
+                    map: map,
+                    position: place.geometry.location, //results[i].geometry.location
+                    icon: icon
+                });
+                markers.push(marker);
+                ViewModel1.placesGoogle()[num].marker = marker; //lets see if this works...
+
+                google.maps.event.addListener(marker, 'click', function() {
+                    marker.setAnimation(google.maps.Animation.DROP);
+                    infowin.setContent(place.name);
+                    infowin.open(map, this);
+
+                });
+                google.maps.event.addListener(marker, 'mouseover', function() {
+                    marker.setIcon(highlightedIcon);
+                });
+                google.maps.event.addListener(marker, 'mouseout', function() {
+                    marker.setIcon(icon);
+                });
+            }
         }
     }
-}
-}
+};
+
 var controller = {
     init: function() {
-        model.GeoLocalize()
+        model.GeoLocalize();
     },
 
     weatherize: function(wdata) {
-        /*  this.temp = ko.observable(Math.floor(wdata.main.temp));
-          this.iconID = ko.observable("http://openweathermap.org/img/w/" + wdata.weather[0].icon + ".png");
-          this.city = ko.observable(wdata.name);
-          console.log(this.temp(),this.iconID(),this.city());*/
-        ViewModel1.temp('Your current temperature is ' + Math.floor(wdata.main.temp * (9 / 5) + 32)) + '"&deg;F"';
+        ViewModel1.temp('Your current temperature is ' + Math.floor(wdata.main.temp * (9 / 5) + 32) + '°F');
         ViewModel1.iconID("http://openweathermap.org/img/w/" + wdata.weather["0"].icon + ".png");
         ViewModel1.weatherdes(wdata.weather[0].description);
     },
 
-    }
+};
 
 
 var ViewModel1 = {
+    errorMarker: ko.observable(),
+    errorRGeo: ko.observable(),
+    errorWeather: ko.observable(),
+    errorWiki: ko.observable(),
+    errorNYTimes: ko.observable(),
+    errorGoogleMap: ko.observable(),
+    notifyGoogleMapError: function() {
+        console.warn("googleMapError is triggered");
+        ViewModel1.errorGoogleMap("Google Map has failed to load.  Please check your network connectivity");
+    },
     weatherdata: ko.observableArray(),
     temp: ko.observable(),
     iconID: ko.observable(),
@@ -361,12 +369,14 @@ var ViewModel1 = {
         'veterinary_care',
         'zoo'
     ]),
-    selectedPlace: ko.observable()
-}
+    selectedPlace: ko.observable('store'),
+};
+
+
+
 function markmarker(place) {
-//  in hmtl inside button add -- onclick="markmarker()"
-    console.log("It works!");
-    google.maps.event.trigger(place.marker, 'click')
+    console.log("markmarker function is triggered");
+    google.maps.event.trigger(place.marker, 'click');
 }
 
 var markers = [];
