@@ -24,18 +24,42 @@
         Select type of locations you want to search within your area.<br>
         <select id="select" name="select" data-bind="options: places, value: selectedPlace, optionsCaption: 'Select'">
         </select>
-        <div data-bind="text: selectedPlace"></div>
+        <!--div data-bind="text: selectedPlace"></div-->
       </div>
     </header>
     <section class="row navlist">
-      <nav class="col-md-4 infonav" data-bind="foreach: placesGoogle">
+      <nav class="col-md-3 infonav">
+        <input placeholder="Filter" type="search" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off">
+        <div data-bind="foreach: placesGoogle">
+          <div data-bind="visible: viewQ">
         <button class=" btn btn-default" data-bind="click: markmarker">
               <h5 data-bind="text: name">  This is a navigational column </h5>
               <span data-bind="text: vicinity"></span>
-            </button>
+            </button></div></div>
       </nav>
-      <div class="col-md-8 map" id="map" data-bind="text: errorGoogleMap">
+      <div class="col-md-7 map" id="map" data-bind="text: errorGoogleMap">
         Awaiting for the google map to appear
+      </div>
+      <div class="col-md-2 yelp infonav">
+        <a href="https://www.yelp.com"><img class="img-fluid yelpimage" src= "Yelp_trademark_RGB.png">
+        </a>
+        <hr>
+        <span data-bind="text: yelperror"></span>
+        <hr>
+        <div data-bind="foreach: yelpdata">
+          <a  href="" data-bind=" attr:{href: url}">
+            <div class="row">
+              <div class="col-md-4">
+                <img src="" class="yelpimage" data-bind=" attr:{src: image_url}" />
+              </div>
+              <div class="col-md-6" <h5 data-bind="text: name">
+                </h5>
+              </div>
+
+            </div>
+          </a>
+
+        </div>
       </div>
     </section>
     <hr>
@@ -43,8 +67,8 @@
       <div class="col-md-1">
         Welcome!
       </div>
-      <div class="col-md-3" >
-          Your current location: <br>
+      <div class="col-md-3">
+        Your current location: <br>
         <div data-bind="text: errorRGeo"></div>
 
         <span data-bind="text: address"> Loading ...</span>
@@ -61,7 +85,7 @@
     <hr>
     <section class="row articles">
       <article class="col-md-6 nytimes-container rounded">
-        <h4 id="nytimes-header" >New York Times Articles</h4>
+        <h4 id="nytimes-header">New York Times Articles</h4>
         <h5 data-bind="text: errorNYTimes"></h5>
         <div data-bind="foreach: articlesNYT">
           <a href="" data-bind="attr:{href: web_url}">

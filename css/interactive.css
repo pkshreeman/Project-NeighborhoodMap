@@ -113,3 +113,14 @@ article {
   border-radius: 3px;
 
 }
+
+.yelpimage {
+  padding: 0;
+  margins: 0;
+  width: 100%;
+  max-width: 100px;
+}
+
+.yelp-box {
+  border: 1px solid #D32323;
+}
