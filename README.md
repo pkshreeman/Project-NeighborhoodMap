@@ -8,6 +8,7 @@
   - The file structure:
     * index.html  (Open this in Web Browser)
     * README.md (You are reading this...)
+    * Yelp_trademark_RGB.png (Yelp!)
     * js (folder)
       - bootstrap.min.js (Bootstrap)
       - jquery-3.1.1.min.js (Bootsrap/jQuery)
@@ -32,7 +33,9 @@
 
 4. Lastly, but not least, the [Google Map](https://developers.google.com/maps/)  (including places) is invoked with your location as the center.  It then searches various establishments around you on your behalf.  You can control what type of establishments you want to explore by choosing the 'types' in drop down which will automatically update the entire front-end for you.
 
-5.  What you can't do:
+5. Yelp has been implemented to provide points of interest when you click on markers (or on the listings provided on left).  The point of interest will be listed on right side of map, and provide you with titles, picture, and link to Yelp's page of additional information.
+
+6.  What you can't do:
     - Change the 'current location' unless you refresh and choose either default or your location.
     - Control the search terms and results of NY Times or Wiki Articles from the front-end.
 
